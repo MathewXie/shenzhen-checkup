@@ -2466,9 +2466,26 @@ html:lang(zh-Hans) .hero__title {
   align-items: start;
 }
 
+/* phones: heading, the card that opens the form, then the contact details */
 @media (min-width: 960px) {
   .contact__grid {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-areas:
+      'intro card'
+      'details card';
+    row-gap: 8px;
+  }
+
+  .contact__intro {
+    grid-area: intro;
+  }
+
+  .contact__grid > .contact__details {
+    grid-area: details;
+  }
+
+  .ask-card {
+    grid-area: card;
   }
 }
 
@@ -2552,7 +2569,6 @@ html:lang(zh-Hans) .hero__title {
 .contact__details {
   display: grid;
   gap: 14px;
-  margin-top: 30px;
 }
 
 .contact__details li {
@@ -2672,6 +2688,340 @@ html:lang(zh-Hans) .hero__title {
   color: var(--ink-mute);
   font-size: 0.8125rem;
   line-height: 1.55;
+}
+
+/* what the enquiry form asks, with the button that opens it */
+.ask-card {
+  display: grid;
+  gap: 18px;
+  padding: clamp(22px, 3.4vw, 36px);
+  background: #ffffff;
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-m);
+}
+
+.ask-card__title {
+  font-size: 1.25rem;
+}
+
+.ask-card__list {
+  display: grid;
+  gap: 12px;
+}
+
+.ask-card__list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  color: var(--ink-soft);
+}
+
+.ask-card__list .icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: var(--teal-700);
+}
+
+.ask-card__cta {
+  width: 100%;
+}
+
+.ask-card__note {
+  color: var(--ink-mute);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/* "Not included": flights, hotel and visa as a one-stop service, price on request */
+.onestop {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 16px 18px;
+  background: var(--honey-50);
+  border-radius: var(--radius-m);
+}
+
+.onestop__tag,
+.choice__tag {
+  justify-self: start;
+  padding: 2px 10px;
+  background: var(--honey-100);
+  color: var(--honey-700);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.onestop__title {
+  font-size: 1.0625rem;
+}
+
+.excluded .onestop p:not(.onestop__tag) {
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
+/* beats .excluded p */
+.excluded .onestop__tag {
+  color: var(--honey-700);
+  font-size: 0.75rem;
+}
+
+/* ---------- enquiry dialog ---------- */
+
+html.has-dialog {
+  overflow: hidden;
+}
+
+.enquiry {
+  width: min(600px, calc(100% - 32px));
+  max-width: none;
+  max-height: min(880px, calc(100dvh - 48px));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
+  color: var(--ink);
+  border: 0;
+  border-radius: var(--radius-l);
+  box-shadow: 0 24px 80px rgba(6, 42, 47, 0.35);
+}
+
+/* browsers without showModal() still get a box on top of the page */
+.enquiry[open] {
+  display: flex;
+  animation: enquiry-in 0.22s ease-out;
+}
+
+.enquiry::backdrop {
+  background: rgba(6, 42, 47, 0.55);
+}
+
+@keyframes enquiry-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+.enquiry__panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.enquiry__head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 22px 22px 16px clamp(22px, 4vw, 32px);
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+}
+
+.enquiry__title {
+  font-size: 1.375rem;
+  line-height: 1.25;
+  outline: none;
+}
+
+.enquiry__lead {
+  margin-top: 6px;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.enquiry__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: var(--marble);
+  color: var(--ink);
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.enquiry__close:hover {
+  background: var(--teal-50);
+  color: var(--teal-700);
+}
+
+.enquiry__close .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.enquiry .enquiry__form {
+  padding: 20px clamp(22px, 4vw, 32px) 26px;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.field__hint,
+.field__error {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.field__hint {
+  color: var(--ink-mute);
+}
+
+.field__error {
+  color: #b3261e;
+  font-weight: 700;
+}
+
+.field input[type='date'] {
+  appearance: none;
+  -webkit-appearance: none;
+  min-width: 0;
+  text-align: left;
+}
+
+.choices {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choices legend {
+  margin-bottom: 8px;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.choice:hover {
+  border-color: var(--teal-300);
+}
+
+.choice:has(input:checked) {
+  background: var(--teal-50);
+  border-color: var(--teal-600);
+}
+
+.choice input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  accent-color: var(--teal-700);
+}
+
+.choice__text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.choice__text strong {
+  font-size: 0.9375rem;
+  line-height: 1.35;
+}
+
+.choice__text small {
+  color: var(--ink-soft);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.choice__tag {
+  margin-top: 4px;
+}
+
+.enquiry__direct {
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.enquiry__direct a {
+  color: var(--teal-700);
+  font-weight: 700;
+}
+
+.enquiry__sent {
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+  padding: 40px clamp(22px, 5vw, 48px) 44px;
+  text-align: center;
+}
+
+.enquiry__sent-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: var(--teal-50);
+  color: var(--teal-700);
+  border-radius: 999px;
+}
+
+.enquiry__sent-icon .icon {
+  width: 28px;
+  height: 28px;
+}
+
+.enquiry__sent-title {
+  font-size: 1.25rem;
+  outline: none;
+}
+
+.enquiry__sent p {
+  max-width: 34em;
+  color: var(--ink-soft);
+}
+
+/* phones: a sheet that rises from the bottom edge */
+@media (max-width: 559px) {
+  .enquiry {
+    width: 100%;
+    max-height: calc(100dvh - 24px);
+    margin: auto 0 0;
+    border-radius: var(--radius-l) var(--radius-l) 0 0;
+  }
+
+  .enquiry__head {
+    padding: 18px 16px 14px 20px;
+  }
+
+  .enquiry .enquiry__form {
+    padding: 18px 20px calc(24px + env(safe-area-inset-bottom));
+  }
 }
 
 /* ---------- footer ---------- */

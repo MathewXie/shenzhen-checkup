@@ -322,8 +322,8 @@
 
   function messageFor(link) {
     var lines = [];
-    var pkg = findPackage(link.getAttribute('data-wa-package'));
-    if (link.hasAttribute('data-wa-partner')) {
+    var pkg = findPackage(link && link.getAttribute('data-wa-package'));
+    if (link && link.hasAttribute('data-wa-partner')) {
       lines.push(messages.partner);
     } else if (pkg) {
       lines.push(fill(messages.package, { P: pkg.label }));
@@ -331,87 +331,305 @@
     } else {
       lines.push(messages.general);
     }
-    if (link.hasAttribute('data-wa-therapies') && therapiesLine()) lines.push(therapiesLine());
+    if (link && link.hasAttribute('data-wa-therapies') && therapiesLine()) lines.push(therapiesLine());
     if (refLine()) lines.push(refLine());
     return lines.join('\n');
   }
 
-  /* Without a WhatsApp number the links lead to the form, pre-filled with what was chosen. */
+  /* Opens WhatsApp without a link element or click event, so the click listeners of
+     measurement tools never see an address that may carry what the visitor typed. */
+  function openWhatsApp(text) {
+    var url = waUrl(text);
+    var opened = null;
+    try {
+      opened = window.open(url, '_blank');
+      if (opened) opened.opener = null;
+    } catch (error) {
+      opened = null;
+    }
+    if (!opened) window.location.href = url;
+  }
+
+  /* ---------- enquiry dialog: every contact button opens it ---------- */
+
+  var dialog = $('[data-enquiry]');
+  var form = $('[data-contact-form]');
+  var sent = $('[data-enquiry-sent]');
+  var trigger = null; /* the button that opened the dialog: decides the "just chat" message */
+
+  function field(id) {
+    return form ? $(id, form) : null;
+  }
+
+  function serviceValue() {
+    var checked = form ? $('input[name="service"]:checked', form) : null;
+    return checked ? checked.value : 'day';
+  }
+
+  function syncService() {
+    var row = form ? $('[data-onestop-only]', form) : null;
+    if (row) row.hidden = serviceValue() !== 'onestop';
+  }
+
+  function isoToday() {
+    var now = new Date();
+    var pad = function (n) {
+      return (n < 10 ? '0' : '') + n;
+    };
+    return now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+  }
+
+  /* 2027-01-15 -> "15 Januari 2027" / "15 January 2027" / "2027年1月15日" */
+  function formatDay(iso) {
+    var parts = String(iso).split('-');
+    if (parts.length !== 3) return iso;
+    var day = new Date(Date.UTC(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2])));
+    var locale = { id: 'id-ID', en: 'en-GB', zh: 'zh-CN' }[data.lang] || 'en-GB';
+    try {
+      return day.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+    } catch (error) {
+      return iso;
+    }
+  }
+
+  function setInvalid(input, errorId, invalid) {
+    if (!input) return;
+    input.classList.toggle('is-invalid', invalid);
+    input.setAttribute('aria-invalid', invalid ? 'true' : 'false');
+    var error = document.getElementById(errorId);
+    if (error) error.hidden = !invalid;
+  }
+
+  /* what the button that was pressed already tells us */
   function prefillForm(link) {
+    if (!form || !link) return;
     var pkgId = link.getAttribute('data-wa-package');
-    var select = $('#f-package');
+    var select = field('#f-package');
     if (pkgId && select) select.value = pkgId;
-    var note = $('#f-message');
+    if (link.hasAttribute('data-wa-onestop')) {
+      var oneStop = $('input[name="service"][value="onestop"]', form);
+      if (oneStop) oneStop.checked = true;
+    }
+    syncService();
+    var note = field('#f-message');
     if (!note || note.value) return;
     if (link.hasAttribute('data-wa-therapies') && therapiesLine()) note.value = therapiesLine();
     if (link.hasAttribute('data-wa-partner')) note.value = messages.partner;
   }
 
+  function setOpen(open) {
+    document.documentElement.classList.toggle('has-dialog', open);
+  }
+
+  function openEnquiry(link) {
+    trigger = link || null;
+    prefillForm(link);
+    if (form) form.hidden = false;
+    if (sent) sent.hidden = true;
+    var date = field('#f-date');
+    if (date) date.min = isoToday();
+    var status = form ? $('[data-form-status]', form) : null;
+    if (status) status.hidden = true;
+    var failedNote = form ? $('[data-form-failed]', form) : null;
+    if (failedNote) failedNote.hidden = true;
+    if (typeof dialog.showModal === 'function') {
+      if (!dialog.open) dialog.showModal();
+    } else {
+      dialog.setAttribute('open', '');
+    }
+    setOpen(true);
+    track('enquiry_open', {
+      package: (link && link.getAttribute('data-wa-package')) || '',
+      one_stop: !!(link && link.hasAttribute('data-wa-onestop')),
+    });
+  }
+
+  function closeEnquiry() {
+    if (!dialog) return;
+    if (typeof dialog.close === 'function' && dialog.open) dialog.close();
+    else dialog.removeAttribute('open');
+    setOpen(false);
+  }
+
   $all('[data-wa]').forEach(function (link) {
-    link.addEventListener('click', function () {
-      if (data.wa) {
-        track('whatsapp_click', {
-          package: link.getAttribute('data-wa-package') || '',
-          partner: link.hasAttribute('data-wa-partner'),
-          group_size: state.group,
-        });
+    link.addEventListener('click', function (event) {
+      if (dialog) {
+        event.preventDefault();
+        openEnquiry(link);
+      } else if (data.wa) {
+        /* pages without the dialog (the one-page summary) go straight to WhatsApp */
+        track('whatsapp_click', { package: link.getAttribute('data-wa-package') || '', group_size: state.group });
         link.href = waUrl(messageFor(link));
         link.target = '_blank';
         link.rel = 'noopener';
-      } else {
-        prefillForm(link);
       }
     });
   });
 
-  /* ---------- enquiry form: builds a WhatsApp draft, stores nothing ---------- */
+  if (dialog) {
+    $all('[data-enquiry-close]', dialog).forEach(function (button) {
+      button.addEventListener('click', closeEnquiry);
+    });
+    /* a click on the dimmed backdrop closes it; the panel fills the whole dialog box */
+    dialog.addEventListener('click', function (event) {
+      if (event.target === dialog) closeEnquiry();
+    });
+    dialog.addEventListener('close', function () {
+      setOpen(false);
+    });
 
-  var form = $('[data-contact-form]');
+    /* "Rather just chat?": the short message the button itself would have sent */
+    var directRow = $('[data-enquiry-direct-row]', dialog);
+    var direct = $('[data-enquiry-direct]', dialog);
+    if (directRow && direct && data.wa) {
+      directRow.hidden = false;
+      direct.addEventListener('click', function (event) {
+        event.preventDefault();
+        track('whatsapp_click', { package: (trigger && trigger.getAttribute('data-wa-package')) || '', direct: true });
+        openWhatsApp(messageFor(trigger));
+      });
+    }
+
+    /* a link to  ...#enquiry  (from an advert or a profile) opens the form straight away */
+    if (window.location.hash === '#enquiry') openEnquiry(null);
+  }
+
+  /* ---------- enquiry form ----------
+     With a Google Form set up (data.form) the answers are posted to it and the team replies
+     on WhatsApp; otherwise they become a WhatsApp draft the visitor sends. */
+
+  var googleForm = data.form && data.form.action ? data.form : null;
+  var lastLines = []; /* the same answers as a WhatsApp message, for the fallback links */
+
+  function showSent() {
+    if (!sent) return;
+    form.hidden = true;
+    sent.hidden = false;
+    var title = $('[data-enquiry-sent-title]', sent);
+    if (title) title.focus();
+  }
+
+  /* fixed wording for the team's spreadsheet, whatever language the page is in */
+  function formEntries(pkg, oneStop, value) {
+    var peopleField = field('#f-people');
+    var note = value('#f-message');
+    if (therapiesLine() && note.indexOf(therapiesLine()) === -1) note = therapiesLine() + (note ? '\n' + note : '');
+    var answers = {
+      name: value('#f-name'),
+      whatsapp: value('#f-wa'),
+      package: pkg ? pkg.letter : '未定 Not sure',
+      people: peopleField ? peopleField.value : '',
+      date: value('#f-date'),
+      service: oneStop ? '一条龙 One-stop (flights, hotel, visa)' : '只体检日 Check-up day only',
+      from: oneStop ? value('#f-from') : '',
+      message: note,
+      lang: data.lang || '',
+      ref: refTag || '',
+    };
+    var body = new URLSearchParams();
+    Object.keys(googleForm.fields).forEach(function (key) {
+      if (answers[key]) body.append(googleForm.fields[key], answers[key]);
+    });
+    return body;
+  }
+
   if (form) {
+    $all('input[name="service"]', form).forEach(function (radio) {
+      radio.addEventListener('change', syncService);
+    });
+    syncService();
+
+    var failed = $('[data-form-failed]', form);
+    var fallback = $('[data-enquiry-fallback]', form);
+    var faster = sent ? $('[data-enquiry-faster]', sent) : null;
+    var fasterRow = sent ? $('[data-enquiry-faster-row]', sent) : null;
+    [fallback, faster].forEach(function (link) {
+      if (!link || !data.wa) return;
+      if (link === faster && fasterRow) fasterRow.hidden = false;
+      link.hidden = false;
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        track('whatsapp_click', { from_form: true });
+        openWhatsApp(lastLines.join('\n'));
+      });
+    });
+
     form.addEventListener('submit', function (event) {
       event.preventDefault();
-      var name = $('#f-name', form);
+      var name = field('#f-name');
+      var wa = field('#f-wa');
+      var date = field('#f-date');
       var status = $('[data-form-status]', form);
-      var missing = !name.value.trim();
-      name.classList.toggle('is-invalid', missing);
-      name.setAttribute('aria-invalid', missing ? 'true' : 'false');
-      if (missing) {
-        name.focus();
+      var noName = !name.value.trim();
+      /* the team replies to this number, so with a Google Form it must look like one */
+      var noNumber = !!googleForm && wa.value.replace(/\D/g, '').length < 8;
+      var pastDate = !!(date && date.value && date.min && date.value < date.min);
+      setInvalid(name, 'f-name-error', noName);
+      if (googleForm) setInvalid(wa, 'f-wa-error', noNumber);
+      setInvalid(date, 'f-date-error', pastDate);
+      if (noName || noNumber || pastDate) {
+        (noName ? name : noNumber ? wa : date).focus();
         return;
       }
       var value = function (id) {
-        var field = $(id, form);
-        return field ? field.value.trim() : '';
+        var input = field(id);
+        return input ? input.value.trim() : '';
       };
       var pkg = findPackage(value('#f-package'));
-      var peopleField = $('#f-people', form);
+      var peopleField = field('#f-people');
       var peopleText = peopleField ? peopleField.options[peopleField.selectedIndex].text : '';
+      var oneStop = serviceValue() === 'onestop';
       var lines = [messages.formIntro, messages.formName + ': ' + value('#f-name')];
       if (value('#f-wa')) lines.push(messages.formWhatsapp + ': ' + value('#f-wa'));
       if (pkg) lines.push(messages.formPackage + ': ' + pkg.label);
       if (peopleText) lines.push(messages.formPeople + ': ' + peopleText);
-      if (value('#f-date')) lines.push(messages.formDate + ': ' + value('#f-date'));
+      if (value('#f-date')) lines.push(messages.formDate + ': ' + formatDay(value('#f-date')));
+      lines.push(messages.formService + ': ' + (oneStop ? messages.serviceOneStop : messages.serviceDay));
+      if (oneStop && value('#f-from')) lines.push(messages.formFrom + ': ' + value('#f-from'));
       if (therapiesLine() && value('#f-message').indexOf(therapiesLine()) === -1) lines.push(therapiesLine());
       if (value('#f-message')) lines.push(messages.formMessage + ': ' + value('#f-message'));
       if (refLine()) lines.push(refLine());
+      lastLines = lines;
+      if (failed) failed.hidden = true;
+      var details = {
+        package: pkg ? pkg.id : '',
+        group_size: peopleField ? peopleField.value : '',
+        one_stop: oneStop,
+        has_date: !!value('#f-date'),
+      };
+
+      if (googleForm) {
+        var button = $('[data-submit]', form);
+        var label = $('[data-submit-label]', form);
+        var idle = label ? label.textContent : '';
+        if (button) button.disabled = true;
+        if (label && data.sending) label.textContent = data.sending;
+        /* Google does not let other sites read its reply, so a sent request counts as
+           delivered; only a network failure is reported. */
+        fetch(googleForm.action, { method: 'POST', mode: 'no-cors', body: formEntries(pkg, oneStop, value) })
+          .then(function () {
+            track('enquiry_form', details);
+            showSent();
+          })
+          .catch(function () {
+            if (failed) failed.hidden = false;
+          })
+          .then(function () {
+            if (button) button.disabled = false;
+            if (label) label.textContent = idle;
+          });
+        return;
+      }
 
       if (!data.wa) {
         if (status) status.hidden = false;
         return;
       }
       if (status) status.hidden = true;
-      track('enquiry_form', { package: pkg ? pkg.id : '', group_size: peopleField ? peopleField.value : '' });
-      /* No link element and no click event here: the click listeners of measurement tools must
-         never see this address, because it carries the visitor's name, number and message. */
-      var url = waUrl(lines.join('\n'));
-      var opened = null;
-      try {
-        opened = window.open(url, '_blank');
-        if (opened) opened.opener = null;
-      } catch (error) {
-        opened = null;
-      }
-      if (!opened) window.location.href = url;
+      track('enquiry_form', details);
+      openWhatsApp(lines.join('\n'));
+      /* WhatsApp is open in another tab or app; the dialog says what happens next */
+      showSent();
     });
   }
 
