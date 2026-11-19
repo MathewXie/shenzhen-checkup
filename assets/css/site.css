@@ -402,7 +402,7 @@ strong {
 
 .brand__mark {
   flex: none;
-  width: 38px;
+  width: 63px;
   height: 38px;
 }
 
@@ -3658,7 +3658,7 @@ html:lang(zh-Hans) .page-hero__title {
 }
 
 .sheet__brand .brand__mark {
-  width: 34px;
+  width: 56px;
   height: 34px;
 }
 
@@ -4144,7 +4144,7 @@ html:lang(zh-Hans) .sheet__title {
   }
 
   .sheet__brand .brand__mark {
-    width: 8mm;
+    width: 13.2mm;
     height: 8mm;
   }
 
