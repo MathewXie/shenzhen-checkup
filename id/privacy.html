@@ -19,7 +19,7 @@
 
 <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="../assets/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../assets/css/site.css?v=f83726a5">
+<link rel="stylesheet" href="../assets/css/site.css?v=d3ef79e7">
 
 <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
 
@@ -94,42 +94,6 @@
 
 <a class="btn btn--wa fab" href="index.html#contact" data-wa data-fab><svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M12 3.6a8.4 8.4 0 0 0-7.2 12.7L3.6 20.4l4.2-1.1A8.4 8.4 0 1 0 12 3.6Z"/><path class="icon__fill" d="M9.2 8.3c.2-.4.4-.5.7-.5h.5c.2 0 .4.1.5.4l.6 1.5c.1.2.1.4-.1.6l-.5.6c.6 1 1.4 1.8 2.5 2.4l.6-.6c.2-.2.4-.2.7-.1l1.4.7c.3.1.4.3.4.6 0 1.1-1 1.7-2 1.6-3-.4-5.5-2.9-6-5.9-.1-.5 0-.9.2-1.3Z"/></svg><span>Tanya via WhatsApp</span></a>
 
-<dialog class="enquiry" id="enquiry" data-enquiry aria-labelledby="enquiry-title">
-  <div class="enquiry__panel">
-    <header class="enquiry__head">
-      <div>
-        <h2 class="enquiry__title" id="enquiry-title" tabindex="-1" autofocus>Ceritakan rencana perjalanan Anda</h2>
-        <p class="enquiry__lead">Isi yang sudah Anda ketahui. Kami membaca setiap pertanyaan dan membalas lewat WhatsApp.</p>
-      </div>
-      <button type="button" class="enquiry__close" data-enquiry-close aria-label="Tutup"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-    </header>
-    <form class="form enquiry__form" id="contact-form" data-contact-form novalidate>
-      <div class="form__row">
-        <label class="field"><span>Nama</span><input type="text" id="f-name" name="name" autocomplete="name" required aria-describedby="f-name-error"><small class="field__error" id="f-name-error" hidden>Mohon isi nama Anda.</small></label>
-        <label class="field"><span>Nomor WhatsApp</span><input type="tel" id="f-wa" name="whatsapp" autocomplete="tel" inputmode="tel" required placeholder="Contoh: +62 812 0000 0000" aria-describedby="f-wa-hint f-wa-error"><small class="field__hint" id="f-wa-hint">Kami membalas ke nomor ini lewat WhatsApp.</small><small class="field__error" id="f-wa-error" hidden>Mohon isi nomor WhatsApp Anda agar kami bisa membalas.</small></label>
-      </div>
-      <div class="form__row">
-        <label class="field"><span>Paket</span><select id="f-package" name="package"><option value="">Belum yakin</option><option value="a">Paket A · Skrining Esensial</option><option value="b">Paket B · Skrining Premium</option><option value="c">Paket C · Skrining Eksekutif</option></select></label>
-        <label class="field"><span>Jumlah orang</span><select id="f-people" name="people"><option value="1">1 orang</option><option value="2">2 orang</option><option value="3">3 orang</option><option value="4">4 orang</option><option value="5+">5 orang atau lebih</option></select></label>
-      </div>
-      <label class="field"><span>Perkiraan tanggal check-up</span><input type="date" id="f-date" name="date" aria-describedby="f-date-hint f-date-error"><small class="field__hint" id="f-date-hint">Perkiraan saja sudah cukup. Tanggal pastinya kami konfirmasi bersama Anda.</small><small class="field__error" id="f-date-error" hidden>Mohon pilih tanggal mulai hari ini.</small></label>
-      <label class="field"><span>Pesan (opsional)</span><textarea id="f-message" name="message" rows="3" placeholder="Preferensi makanan, alergi, atau hal lain yang perlu kami ketahui"></textarea></label>
-      <button class="btn btn--primary btn--lg form__submit" type="submit" data-submit><span data-submit-label>Kirim data saya</span><svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-      <p class="form__status" data-form-status role="status" hidden>Nomor WhatsApp kami belum tersedia. Silakan coba lagi nanti.</p>
-      <p class="form__status" data-form-failed role="alert" hidden>Data Anda belum terkirim. Periksa koneksi internet, lalu coba lagi. <a href="#" data-enquiry-fallback hidden>Atau kirimkan lewat WhatsApp</a></p>
-      <p class="form__assure"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="M12 3.5 5 6v5.5c0 4.3 2.9 7.6 7 9 4.1-1.4 7-4.7 7-9V6l-7-2.5Z"/><path d="m9 12 2.2 2.2L15.2 10"/></svg><span>Biaya reservasi Rp1,8 juta · Batal tanpa biaya bila lebih dari 7 hari sebelum jadwal</span></p>
-      <p class="form__consent">Jawaban Anda masuk ke formulir pertanyaan kami di Google Forms, agar tim kami dapat membalas Anda lewat WhatsApp. Data ini hanya kami gunakan untuk pertanyaan dan perjalanan Anda. <a href="privacy.html">Kebijakan privasi dan penafian</a></p>
-      <p class="enquiry__direct" data-enquiry-direct-row hidden><a href="#" data-enquiry-direct>Ingin langsung mengobrol? Buka WhatsApp tanpa formulir</a></p>
-    </form>
-    <div class="enquiry__sent" data-enquiry-sent hidden>
-      <span class="enquiry__sent-icon"><svg class="icon" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
-      <h3 class="enquiry__sent-title" tabindex="-1" data-enquiry-sent-title>Terima kasih, data Anda sudah kami terima</h3>
-      <p>Kami akan membalas lewat WhatsApp setelah membacanya.</p>
-      <button type="button" class="btn btn--ghost" data-enquiry-close>Kembali ke halaman</button>
-      <p class="enquiry__direct" data-enquiry-faster-row hidden><a href="#" data-enquiry-faster>Ingin dibalas lebih cepat? Kirim juga data Anda lewat WhatsApp</a></p>
-    </div>
-  </div>
-</dialog>
 <script id="site-data" type="application/json">{"lang":"id","wa":"6283198447123","messages":{"general":"Halo, saya ingin bertanya tentang program medical check-up + TCM sehari di Shenzhen.","package":"Halo, saya ingin bertanya tentang %P%.","group":"Jumlah orang: %N%.","therapies":"Untuk sesi TCM, saya tertarik dengan terapi berikut: %T%.","formIntro":"Halo, saya ingin bertanya tentang program medical check-up + TCM sehari di Shenzhen:","formName":"Nama","formWhatsapp":"Nomor WhatsApp","formPackage":"Paket","formPeople":"Jumlah orang","formDate":"Perkiraan tanggal check-up","formService":"Yang perlu diatur","serviceDay":"Hari check-up saja","serviceOneStop":"Layanan lengkap dengan tiket pesawat, hotel, dan visa (mohon kirimkan penawaran)","formFrom":"Berangkat dari","formMessage":"Pesan","partner":"Halo, saya ingin bertanya tentang kerja sama untuk program medical check-up + TCM sehari di Shenzhen.","ref":"Ref: %R%"},"shareMessage":"Saya sedang mempertimbangkan program ini: medical check-up dan sesi TCM dalam satu hari di Shenzhen. Tolong dilihat dulu ya, nanti kita bicarakan bersama. Harga dan isi tiap paket ada di sini:","packages":[{"id":"a","letter":"A","label":"Paket A · Skrining Esensial","total":{"1":800,"2":1500,"3":2200,"4":2700},"perPerson":{"1":800,"2":750,"3":733,"4":675}},{"id":"b","letter":"B","label":"Paket B · Skrining Premium","total":{"1":1400,"2":2700,"3":4000,"4":5100},"perPerson":{"1":1400,"2":1350,"3":1333,"4":1275}},{"id":"c","letter":"C","label":"Paket C · Skrining Eksekutif","total":{"1":1900,"2":3700,"3":5500,"4":7100},"perPerson":{"1":1900,"2":1850,"3":1833,"4":1775}}],"totalLabels":["Harga untuk 1 orang","Total untuk 2 orang","Total untuk 3 orang","Total untuk 4 orang"],"perPersonPattern":"%V% per orang","idrPattern":"Sekitar %V%","fx":18000,"pickCount":"%N% dari 3 dipilih","analytics":{"ga4":"","metaPixel":"","tiktokPixel":""},"form":{"action":"https://docs.google.com/forms/d/e/1FAIpQLSeYeg98AmdljFvUXUUMBhjE17-OklZhu7ZiSwS-iMDaE35G4w/formResponse","fields":{"name":"entry.255648675","whatsapp":"entry.294098870","package":"entry.2003686944","people":"entry.1766190331","date":"entry.603218293","service":"entry.1184128680","from":"entry.944956424","message":"entry.162098267","lang":"entry.1504086001","ref":"entry.2139248348"}},"sending":"Mengirim…"}</script>
 <script src="../assets/js/site.js?v=aeec8b72" defer></script>
 </body>

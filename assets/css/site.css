@@ -2466,7 +2466,7 @@ html:lang(zh-Hans) .hero__title {
   align-items: start;
 }
 
-/* phones: heading, the card that opens the form, then the contact details */
+/* phones: heading, the direct contact card, then the card with the WhatsApp button */
 @media (min-width: 960px) {
   .contact__grid {
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
@@ -2480,7 +2480,7 @@ html:lang(zh-Hans) .hero__title {
     grid-area: intro;
   }
 
-  .contact__grid > .contact__details {
+  .contact__grid > .person-card {
     grid-area: details;
   }
 
@@ -2599,6 +2599,90 @@ html:lang(zh-Hans) .hero__title {
 .contact__value {
   font-weight: 700;
   overflow-wrap: anywhere;
+}
+
+/* direct contact card: photo, name, then WhatsApp, WeChat, phone, email and hours */
+.person-card {
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 28px);
+  background: #ffffff;
+  border-radius: var(--radius-l);
+  box-shadow: var(--shadow-m);
+}
+
+.person-card__head {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.person-card__avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--teal-50);
+  color: var(--teal-700);
+}
+
+.person-card__avatar picture,
+.person-card__avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.person-card__avatar > .icon {
+  width: 44px;
+  height: 44px;
+}
+
+.person-card__name {
+  color: var(--ink);
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.person-card__role {
+  margin-top: 2px;
+  color: var(--ink-mute);
+  font-size: 0.9375rem;
+}
+
+.person-card .contact__details {
+  gap: 10px;
+}
+
+.person-card .contact__details li {
+  align-items: center;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-m);
+}
+
+.person-card .contact__details .icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  margin-top: 0;
+  padding: 7px;
+  border-radius: 50%;
+  background: var(--teal-50);
+}
+
+.person-card a.contact__value {
+  color: inherit;
+  text-decoration: none;
+}
+
+.person-card a.contact__value:hover {
+  color: var(--teal-700);
+  text-decoration: underline;
 }
 
 .form {
