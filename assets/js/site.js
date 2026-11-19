@@ -228,8 +228,10 @@
 
   /* ---------- group size: updates the three package prices ---------- */
 
-  /* package prices are stored in US dollars and shown in rupiah (same as usd() in ui.mjs) */
+  /* package prices are stored in US dollars: shown in dollars on English pages,
+     in rupiah on Indonesian pages (same as usd() in ui.mjs) */
   function formatUsd(amount) {
+    if (data.lang === 'en') return 'US$' + Math.round(Number(amount)).toLocaleString('en-US');
     return formatIdr(Number(amount) * (data.fx || 18000));
   }
 
