@@ -1823,6 +1823,39 @@ html:lang(zh-Hans) .hero__title {
   color: var(--ink-soft);
 }
 
+/* ---------- before your check-up ---------- */
+
+.prep {
+  display: grid;
+  gap: 16px;
+}
+
+@media (min-width: 720px) {
+  .prep { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .prep { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.prep__group {
+  min-width: 0;
+  padding: 20px 22px;
+  background: #ffffff;
+  border-radius: var(--radius-m);
+}
+
+.prep__h {
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+.prep__group .notes {
+  margin-top: 10px;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+}
+
 /* ---------- facility gallery ---------- */
 
 .gallery {
