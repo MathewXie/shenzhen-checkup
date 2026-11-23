@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://mathewxie.github.io/shenzhen-checkup/sitemap.xml

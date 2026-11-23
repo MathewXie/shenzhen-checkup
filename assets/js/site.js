@@ -338,9 +338,94 @@
     return lines.join('\n');
   }
 
+  /* WeChat's built-in browser blocks wa.me links, so a tap there did nothing (team report 2026-11-20).
+     Show how to continue instead: open the page in a browser, or copy the number. */
+  var inWeChat = /MicroMessenger/i.test(navigator.userAgent || '');
+
+  function showWeChatTip(share) {
+    var old = $('.wx-tip');
+    if (old) old.parentNode.removeChild(old);
+    var number = data.waDisplay || ('+' + data.wa);
+    var box = document.createElement('div');
+    box.className = 'wx-tip';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    var panel = document.createElement('div');
+    panel.className = 'wx-tip__panel';
+    var title = document.createElement('p');
+    title.className = 'wx-tip__title';
+    title.textContent = messages.wxTitle || '';
+    var text = document.createElement('p');
+    text.textContent = (share ? messages.wxShareText : messages.wxText) || '';
+    var num = document.createElement('p');
+    num.className = 'wx-tip__number';
+    num.textContent = number;
+    var copy = document.createElement('button');
+    copy.type = 'button';
+    copy.className = 'btn btn--wa';
+    copy.textContent = messages.wxCopy || 'Copy';
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'btn btn--ghost';
+    close.textContent = messages.wxClose || 'Close';
+    var row = document.createElement('div');
+    row.className = 'wx-tip__actions';
+    row.appendChild(copy);
+    row.appendChild(close);
+    panel.appendChild(title);
+    panel.appendChild(text);
+    if (!share) panel.appendChild(num);
+    else copy.hidden = true;
+    panel.appendChild(row);
+    box.appendChild(panel);
+    document.body.appendChild(box);
+    function done() {
+      if (box.parentNode) box.parentNode.removeChild(box);
+    }
+    close.addEventListener('click', done);
+    box.addEventListener('click', function (event) {
+      if (event.target === box) done();
+    });
+    copy.addEventListener('click', function () {
+      var ok = function () {
+        copy.textContent = messages.wxCopied || 'Copied';
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(number).then(ok, function () {
+            fallbackCopy(number);
+            ok();
+          });
+          return;
+        }
+      } catch (error) {}
+      fallbackCopy(number);
+      ok();
+    });
+    track('whatsapp_blocked_wechat', {});
+  }
+
+  function fallbackCopy(value) {
+    var area = document.createElement('textarea');
+    area.value = value;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    try {
+      document.execCommand('copy');
+    } catch (error) {}
+    document.body.removeChild(area);
+  }
+
   /* Opens WhatsApp without a link element or click event, so the click listeners of
      measurement tools never see an address that may carry what the visitor typed. */
   function openWhatsApp(text) {
+    if (inWeChat) {
+      showWeChatTip();
+      return;
+    }
     var url = waUrl(text);
     var opened = null;
     try {
@@ -455,6 +540,11 @@
 
   $all('[data-wa]').forEach(function (link) {
     link.addEventListener('click', function (event) {
+      if (inWeChat && data.wa) {
+        event.preventDefault();
+        showWeChatTip();
+        return;
+      }
       if (dialog) {
         event.preventDefault();
         openEnquiry(link);
@@ -653,7 +743,12 @@
     link.target = '_blank';
     link.rel = 'noopener';
     link.hidden = false;
-    link.addEventListener('click', function () {
+    link.addEventListener('click', function (event) {
+      if (inWeChat) {
+        event.preventDefault();
+        showWeChatTip(true);
+        return;
+      }
       track('share_whatsapp', {});
     });
   });
@@ -705,4 +800,29 @@
 
   hideWhileVisible($('[data-sticky-cta]'), [$('#contact'), $('.site-footer')].filter(Boolean));
   hideWhileVisible($('[data-fab]'), [$('.hero__cta'), $('#contact'), $('.site-footer')].filter(Boolean));
+
+  /* ---------- TCM clinic clips: play (muted, looping) only while on screen ---------- */
+
+  var clips = $all('[data-clip]');
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  clips.forEach(function (video) {
+    video.addEventListener('click', function () {
+      if (video.paused) video.play().catch(function () {});
+      else video.pause();
+    });
+  });
+  if (clips.length && !reduceMotion && 'IntersectionObserver' in window) {
+    var clipWatch = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) entry.target.play().catch(function () {});
+          else entry.target.pause();
+        });
+      },
+      { threshold: 0.5 },
+    );
+    clips.forEach(function (video) {
+      clipWatch.observe(video);
+    });
+  }
 })();

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/.</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/."/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id"/>
+  </url>
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/id</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/."/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id"/>
+  </url>
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/packages.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/packages.html"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id/packages.html"/>
+  </url>
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/id/packages.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/packages.html"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id/packages.html"/>
+  </url>
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id/privacy.html"/>
+  </url>
+  <url>
+    <loc>https://mathewxie.github.io/shenzhen-checkup/id/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mathewxie.github.io/shenzhen-checkup/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="id" href="https://mathewxie.github.io/shenzhen-checkup/id/privacy.html"/>
+  </url>
+</urlset>
